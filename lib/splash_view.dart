@@ -1,0 +1,45 @@
+import 'package:flutter/material.dart';
+import 'package:tiktok_video/routers/routers.dart';
+import 'package:tiktok_video/utils/navigator_key.dart';
+
+class SplashView extends StatefulWidget {
+  const SplashView({super.key});
+
+  static Route<void> route() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const SplashView(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return child;
+      },
+      fullscreenDialog: true,
+    );
+  }
+
+  @override
+  State<SplashView> createState() => _SplashViewState();
+}
+
+class _SplashViewState extends State<SplashView> {
+  @override
+  void initState() {
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.pushNamed(RootNavigatorKey.context, Routers.login);
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+          ],
+        ),
+      ),
+    );
+  }
+}
