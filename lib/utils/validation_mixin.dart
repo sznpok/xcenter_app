@@ -8,8 +8,14 @@ class ValidationMixin {
 
   //regex for password validation
   bool validatePassword(String password) {
-    final RegExp regex = RegExp(
-        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})');
+    final RegExp regex =
+        RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=)');
     return regex.hasMatch(password);
+  }
+
+  //regex for text validation
+  bool validateText(String text) {
+    final RegExp regex = RegExp(r'^[a-zA-Z ]+$');
+    return regex.hasMatch(text);
   }
 }

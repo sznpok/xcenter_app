@@ -35,8 +35,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     LoginEvent event,
     Emitter<AuthState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true));
     if (state.loginKey!.currentState!.validate()) {
+      emit(state.copyWith(isLoading: true));
+
       await authRepo
           .signInWithEmailPassword(
         state.email,
@@ -64,20 +65,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     RegisterEvent event,
     Emitter<AuthState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true));
-    await authRepo
-        .signupWithEmailPassword(
-      state.email,
-      state.password,
-      state.fullName,
-    )
-        .then((value) {
-      emit(state.copyWith(
-        isLoading: false,
-      ));
-    }).whenComplete(() {
-      emit(state.copyWith(isLoading: false));
-    });
+    if (state.registerKey!.currentState!.validate()) {
+      emit(state.copyWith(isLoading: true));
+      await authRepo
+          .signupWithEmailPassword(
+        state.email,
+        state.password,
+        state.fullName,
+      )
+          .then((value) {
+        emit(state.copyWith(
+          isLoading: false,
+        ));
+
+        Navigator.of(RootNavigatorKey.context).pushNamed(Routers.home);
+      }).catchError((error) {
+        emit(state.copyWith(isLoading: false));
+        showSnackBar(content: "Sign Up Failed", color: AppColors.red);
+      }).whenComplete(() {
+        emit(state.copyWith(isLoading: false));
+      });
+    }
   }
 
   FutureOr<void> _onFullNameChangedEvent(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tiktok_video/routers/routers.dart';
-import 'package:tiktok_video/utils/navigator_key.dart';
+import 'package:tiktok_video/module/auth/view/auth_gate.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -24,7 +23,10 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushNamed(RootNavigatorKey.context, Routers.login);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => AuthGate()),
+          (route) => false);
     });
     super.initState();
   }
