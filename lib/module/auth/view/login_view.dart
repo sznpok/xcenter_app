@@ -172,7 +172,7 @@ class LoginView extends StatelessWidget {
                                 },
                                 label: "Sign In",
                                 labelColor: AppColors.white,
-                                loading: !state.isLoading,
+                                loading: state.isLoading,
                               ),
                               20.verticalSpace,
                               Row(

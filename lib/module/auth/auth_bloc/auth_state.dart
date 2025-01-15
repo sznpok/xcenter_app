@@ -14,7 +14,7 @@ class AuthState extends Equatable {
   const AuthState({
     this.email = '',
     this.password = '',
-    this.isLoading = true,
+    this.isLoading = false,
     this.isPasswordVisible = false,
     this.fullName = '',
     this.confirmPassword = '',

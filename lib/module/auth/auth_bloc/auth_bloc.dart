@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tiktok_video/constants/app_colors.dart';
 import 'package:tiktok_video/module/auth/repo/auth_repo.dart';
 import 'package:tiktok_video/utils/navigator_key.dart';
+import 'package:tiktok_video/utils/snackbar.dart';
 
 import '../../../routers/routers.dart';
 
@@ -45,6 +47,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           isLoading: false,
         ));
         Navigator.pushNamed(RootNavigatorKey.context, Routers.home);
+      }).catchError((error) {
+        showSnackBar(
+          content: error.toString().replaceAll('Exception: ', ''),
+          color: AppColors.red,
+        );
+        emit(state.copyWith(isLoading: false));
       }).whenComplete(() {
         emit(state.copyWith(isLoading: false));
       });
