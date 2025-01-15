@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "206746871148",
+    "project_id": "ecenter-2d8c4",
+    "storage_bucket": "ecenter-2d8c4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206746871148:android:8d87ccce165a5f9d1aff49",
+        "android_client_info": {
+          "package_name": "com.example.tiktok_video"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjI4LX_SSktcHdSV1bcBGQon3D9rO-_g4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
