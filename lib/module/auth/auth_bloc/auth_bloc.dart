@@ -77,8 +77,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(state.copyWith(
           isLoading: false,
         ));
-
-        Navigator.of(RootNavigatorKey.context).pushNamed(Routers.home);
+        Navigator.pushNamedAndRemoveUntil(
+            RootNavigatorKey.context, Routers.home, (value) => false);
       }).catchError((error) {
         emit(state.copyWith(isLoading: false));
         showSnackBar(content: "Sign Up Failed", color: AppColors.red);
