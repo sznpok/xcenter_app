@@ -102,10 +102,8 @@ class HomeView extends StatelessWidget {
                         child: IconButton(
                           onPressed: () {
                             final homeBloc = context.read<HomeBloc>();
-                            // Load comments before showing bottom sheet
                             homeBloc.add(
                                 LoadCommentsEvent(homeBloc.state.currentIndex));
-
                             showCustomBottomSheet(
                               child: BlocProvider.value(
                                 value: homeBloc,
@@ -114,7 +112,16 @@ class HomeView extends StatelessWidget {
                                     return Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        const Text('Comments'),
+                                        Text(
+                                          'Comments',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
                                         10.verticalSpace,
                                         Padding(
                                           padding: EdgeInsets.symmetric(
@@ -122,6 +129,7 @@ class HomeView extends StatelessWidget {
                                           child: Expanded(
                                             child: CustomTextFormField(
                                               name: "comment",
+                                              hintText: "Add a comment",
                                               initialValue: state.commentName,
                                               onChanged: (value) {
                                                 if (value != null) {
@@ -172,7 +180,6 @@ class HomeView extends StatelessWidget {
                                                       ),
                                                     )
                                                   : ListView.builder(
-                                                      shrinkWrap: true,
                                                       itemCount: state
                                                           .comments.reversed
                                                           .toList()
@@ -180,7 +187,8 @@ class HomeView extends StatelessWidget {
                                                       itemBuilder:
                                                           (context, index) {
                                                         final comment = state
-                                                            .comments[index];
+                                                            .comments.reversed
+                                                            .toList()[index];
                                                         return ListTile(
                                                           title: Text(comment
                                                                   .commentName ??

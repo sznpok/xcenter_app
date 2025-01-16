@@ -62,10 +62,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   @override
   Widget build(BuildContext context) {
     return _isInitialized
-        ? AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
-          )
+        ? VideoPlayer(_controller)
         : const Center(
             child: CircularProgressIndicator(),
           );

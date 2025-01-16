@@ -34,21 +34,4 @@ class LocalDatabaseServices {
       throw Exception('Failed to fetch comments: $e');
     }
   }
-
-  // Delete comments for specific video
-  Future<void> deleteCommentsForVideo(int videoIndex) async {
-    try {
-      final box = await _openCommentBox();
-      final keysToDelete = box.values
-          .where((comment) => comment.videoIndex == videoIndex)
-          .map((comment) => comment.key)
-          .toList();
-
-      for (var key in keysToDelete) {
-        await box.delete(key);
-      }
-    } catch (e) {
-      throw Exception('Failed to delete comments: $e');
-    }
-  }
 }
