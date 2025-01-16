@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tiktok_video/module/auth/repo/auth_repo.dart';
 import 'package:tiktok_video/module/home/bloc/home_bloc.dart';
+import 'package:tiktok_video/module/home/widgets/custom_bottom_sheet.dart';
 
 import '../../../constants/app_colors.dart';
 import '../widgets/custom_video_player.dart';
@@ -79,17 +81,41 @@ class HomeView extends StatelessWidget {
                       isCurrentPage: state.currentIndex == index,
                     ),
                     Positioned(
-                      bottom: 70,
-                      left: 20,
-                      child: IconButton(
-                          onPressed: () {}, icon: const Icon(Icons.share)),
+                      bottom: 160.sp,
+                      right: 10.sp,
+                      child: CircleAvatar(
+                        backgroundColor: AppColors.white,
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.share,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
                     ),
                     Positioned(
-                      bottom: 15,
-                      left: 20,
-                      right: 20,
-                      child: const CircleAvatar(
-                        child: Icon(Icons.share),
+                      bottom: 100.sp,
+                      right: 10.sp,
+                      child: CircleAvatar(
+                        backgroundColor: AppColors.white,
+                        child: IconButton(
+                          onPressed: () {
+                            showCustomBottomSheet(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text('Comment'),
+                                  10.verticalSpace,
+                                ],
+                              ),
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.comment,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
                       ),
                     ),
                   ],
