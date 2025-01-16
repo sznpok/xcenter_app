@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tiktok_video/module/auth/repo/auth_repo.dart';
 import 'package:tiktok_video/module/home/bloc/home_bloc.dart';
-import 'package:tiktok_video/module/home/model/comment_model.dart';
-import 'package:tiktok_video/module/home/services/local_database_services.dart';
 import 'package:tiktok_video/module/home/widgets/custom_bottom_sheet.dart';
 import 'package:tiktok_video/widgets/custom_text_form.dart';
 
@@ -75,7 +73,6 @@ class HomeView extends StatelessWidget {
               },
               itemBuilder: (context, index) {
                 String video = videos[index];
-                print("VIdeo $video");
                 return Stack(
                   alignment: Alignment.center,
                   children: [
@@ -103,97 +100,99 @@ class HomeView extends StatelessWidget {
                       child: CircleAvatar(
                         backgroundColor: AppColors.white,
                         child: IconButton(
-                          onPressed: () async {
-                            final localDb = LocalDatabaseServices();
-                            final comments =
-                                await localDb.getCommentsForVideo(index);
+                          onPressed: () {
+                            final homeBloc = context.read<HomeBloc>();
+                            // Load comments before showing bottom sheet
+                            homeBloc.add(
+                                LoadCommentsEvent(homeBloc.state.currentIndex));
 
                             showCustomBottomSheet(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text('Comments'),
-                                  10.verticalSpace,
-                                  Expanded(
-                                    child: Column(
+                              child: BlocProvider.value(
+                                value: homeBloc,
+                                child: BlocBuilder<HomeBloc, HomeState>(
+                                  builder: (context, state) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        // Comment input field
-                                        /*Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: TextField(
-                                            decoration: InputDecoration(
-                                              hintText: 'Add a comment...',
+                                        const Text('Comments'),
+                                        10.verticalSpace,
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10.sp),
+                                          child: Expanded(
+                                            child: CustomTextFormField(
+                                              name: "comment",
+                                              initialValue: state.commentName,
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  context.read<HomeBloc>().add(
+                                                        ChangeCommentNamedEvent(
+                                                            commentName: value),
+                                                      );
+                                                }
+                                              },
                                               suffixIcon: IconButton(
-                                                icon: Icon(Icons.send),
-                                                onPressed: () async {
-                                                  // Get text from controller
-                                                  final commentText = _commentController.text;
-                                                  if (commentText.isNotEmpty) {
-                                                    await localDb.addComment(
-                                                      CommentModel(
-                                                        id: DateTime.now().toString(),
-                                                        commentName: commentText,
-                                                        videoIndex: index,
-                                                      ),
-                                                    );
-                                                    final newComments =
-                                                        await localDb.getCommentsForVideo(index);
-                                                    setState(() {
-                                                      comments = newComments;
-                                                    });
-                                                    _commentController.clear();
+                                                onPressed: () {
+                                                  if (state.commentName
+                                                          ?.isNotEmpty ??
+                                                      false) {
+                                                    context
+                                                        .read<HomeBloc>()
+                                                        .add(
+                                                          AddCommentEvent(
+                                                            videoIndex: state
+                                                                .currentIndex,
+                                                            comment: state
+                                                                .commentName!,
+                                                          ),
+                                                        );
+                                                    context.read<HomeBloc>().add(
+                                                        ClearCommentEvent());
                                                   }
                                                 },
+                                                icon: const Icon(Icons.send),
                                               ),
                                             ),
-                                            controller: _commentController,
-                                          ),
-                                        ),*/
-
-                                        CustomTextFormField(
-                                          name: "comment",
-                                          initialValue: state.commentName,
-                                          onChanged: (value) {
-                                            if (value != null) {
-                                              context.read<HomeBloc>().add(
-                                                  ChangeCommentNamedEvent(
-                                                      commentName: value));
-                                            }
-                                          },
-                                          suffixIcon: IconButton(
-                                            onPressed: () {
-                                              localDb.addComment(
-                                                CommentModel(
-                                                  id: "",
-                                                  commentName:
-                                                      state.commentName,
-                                                  videoIndex: index,
-                                                ),
-                                              );
-                                            },
-                                            icon: Icon(Icons.send),
                                           ),
                                         ),
-                                        // Comments list
                                         Expanded(
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: comments.length,
-                                            itemBuilder: (context, index) {
-                                              return ListTile(
-                                                title: Text(comments[index]
-                                                        .commentName ??
-                                                    ''),
-                                                subtitle: Text(
-                                                    'Comment #${index + 1}'),
-                                              );
-                                            },
-                                          ),
+                                          child: state.isLoading
+                                              ? const Center(
+                                                  child:
+                                                      CircularProgressIndicator())
+                                              : state.comments.reversed
+                                                      .toList()
+                                                      .isEmpty
+                                                  ? Center(
+                                                      child: Text(
+                                                        'No comments yet',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyMedium,
+                                                      ),
+                                                    )
+                                                  : ListView.builder(
+                                                      shrinkWrap: true,
+                                                      itemCount: state
+                                                          .comments.reversed
+                                                          .toList()
+                                                          .length,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        final comment = state
+                                                            .comments[index];
+                                                        return ListTile(
+                                                          title: Text(comment
+                                                                  .commentName ??
+                                                              ''),
+                                                        );
+                                                      },
+                                                    ),
                                         ),
                                       ],
-                                    ),
-                                  ),
-                                ],
+                                    );
+                                  },
+                                ),
                               ),
                             );
                           },

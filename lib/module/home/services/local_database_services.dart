@@ -1,10 +1,11 @@
 import 'package:hive/hive.dart';
+
 import '../model/comment_model.dart';
 
 class LocalDatabaseServices {
   static const String commentBoxName = 'comments';
-  
-  // Initialize Hive and open box
+
+  // Initialize Hive and open box for comments
   Future<Box<CommentModel>> _openCommentBox() async {
     if (!Hive.isBoxOpen(commentBoxName)) {
       return await Hive.openBox<CommentModel>(commentBoxName);
@@ -42,7 +43,7 @@ class LocalDatabaseServices {
           .where((comment) => comment.videoIndex == videoIndex)
           .map((comment) => comment.key)
           .toList();
-      
+
       for (var key in keysToDelete) {
         await box.delete(key);
       }

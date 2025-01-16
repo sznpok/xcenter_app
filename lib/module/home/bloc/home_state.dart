@@ -1,48 +1,43 @@
 part of 'home_bloc.dart';
 
+@immutable
 class HomeState extends Equatable {
-  final VideoPlayerController? videoPlayerController;
-  final bool isPlaying;
-  final bool isInitialized;
+  final PageController pageController;
   final int currentIndex;
-  final PageController? pageController;
-  final String commentName;
+  final String? commentName;
+  final List<CommentModel> comments;
+  final bool isLoading;
 
   const HomeState({
-    this.videoPlayerController,
-    this.isPlaying = false,
-    this.isInitialized = false,
+    required this.pageController,
     this.currentIndex = 0,
-    this.pageController,
-    this.commentName = '',
+    this.commentName,
+    this.comments = const [],
+    this.isLoading = false,
   });
 
   HomeState copyWith({
-    VideoPlayerController? videoPlayerController,
-    bool? isPlaying,
-    bool? isInitialized,
-    int? currentIndex,
     PageController? pageController,
+    int? currentIndex,
     String? commentName,
+    List<CommentModel>? comments,
+    bool? isLoading,
   }) {
     return HomeState(
-      videoPlayerController:
-          videoPlayerController ?? this.videoPlayerController,
-      isPlaying: isPlaying ?? this.isPlaying,
-      isInitialized: isInitialized ?? this.isInitialized,
-      currentIndex: currentIndex ?? this.currentIndex,
       pageController: pageController ?? this.pageController,
+      currentIndex: currentIndex ?? this.currentIndex,
       commentName: commentName ?? this.commentName,
+      comments: comments ?? this.comments,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 
   @override
   List<Object?> get props => [
-        videoPlayerController,
-        isPlaying,
-        isInitialized,
-        currentIndex,
         pageController,
+        currentIndex,
         commentName,
+        comments,
+        isLoading,
       ];
 }

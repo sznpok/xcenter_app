@@ -1,55 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 
-import '../bloc/home_bloc.dart';
-
-class CustomVideoPlayer extends StatelessWidget {
+class CustomVideoPlayer extends StatefulWidget {
   final String videoUrl;
   final bool isCurrentPage;
 
   const CustomVideoPlayer({
-    super.key,
+    Key? key,
     required this.videoUrl,
     required this.isCurrentPage,
-  });
+  }) : super(key: key);
+
+  @override
+  State<CustomVideoPlayer> createState() => _CustomVideoPlayerState();
+}
+
+class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
+  late VideoPlayerController _controller;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeVideo();
+  }
+
+  Future<void> _initializeVideo() async {
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
+    try {
+      await _controller.initialize();
+      _controller.setLooping(true);
+      if (widget.isCurrentPage) {
+        _controller.play();
+      }
+      setState(() {
+        _isInitialized = true;
+      });
+    } catch (e) {
+      print('Error initializing video: $e');
+    }
+  }
+
+  @override
+  void didUpdateWidget(CustomVideoPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isCurrentPage != oldWidget.isCurrentPage) {
+      if (widget.isCurrentPage) {
+        _controller.play();
+      } else {
+        _controller.pause();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => HomeBloc()..add(InitializeVideoEvent(videoUrl)),
-      child: BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-          if (!state.isInitialized) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final bloc = context.read<HomeBloc>();
-          if (isCurrentPage && !state.isPlaying) {
-            bloc.add(PlayVideoEvent());
-          } else if (!isCurrentPage && state.isPlaying) {
-            bloc.add(PauseVideoEvent());
-          }
-          return GestureDetector(
-            onTap: () {
-              if (state.isPlaying) {
-                bloc.add(PauseVideoEvent());
-              } else {
-                bloc.add(PlayVideoEvent());
-              }
-            },
-            child: SizedBox.expand(
-              child: FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width: state.videoPlayerController!.value.size.width,
-                  height: state.videoPlayerController!.value.size.height,
-                  child: VideoPlayer(state.videoPlayerController!),
-                ),
-              ),
-            ),
+    return _isInitialized
+        ? AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+            child: VideoPlayer(_controller),
+          )
+        : const Center(
+            child: CircularProgressIndicator(),
           );
-        },
-      ),
-    );
   }
 }
