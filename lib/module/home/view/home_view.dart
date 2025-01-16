@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:tiktok_video/module/auth/repo/auth_repo.dart';
 import 'package:tiktok_video/module/home/bloc/home_bloc.dart';
 import 'package:tiktok_video/module/home/widgets/custom_bottom_sheet.dart';
@@ -72,7 +73,6 @@ class HomeView extends StatelessWidget {
                 context.read<HomeBloc>().add(OnPageChangedEvent(index));
               },
               itemBuilder: (context, index) {
-                String video = videos[index];
                 return Stack(
                   alignment: Alignment.center,
                   children: [
@@ -86,7 +86,9 @@ class HomeView extends StatelessWidget {
                       child: CircleAvatar(
                         backgroundColor: AppColors.white,
                         child: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Share.shareUri(Uri.parse(videos[index]));
+                          },
                           icon: const Icon(
                             Icons.share,
                             color: AppColors.primaryColor,
