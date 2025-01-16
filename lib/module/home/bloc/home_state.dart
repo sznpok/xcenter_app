@@ -5,6 +5,7 @@ class HomeState extends Equatable {
   final PageController pageController;
   final int currentIndex;
   final String? commentName;
+  final TextEditingController? commentController;
   final List<CommentModel> comments;
   final bool isLoading;
 
@@ -14,6 +15,7 @@ class HomeState extends Equatable {
     this.commentName,
     this.comments = const [],
     this.isLoading = false,
+    this.commentController,
   });
 
   HomeState copyWith({
@@ -22,6 +24,7 @@ class HomeState extends Equatable {
     String? commentName,
     List<CommentModel>? comments,
     bool? isLoading,
+    TextEditingController? commentController,
   }) {
     return HomeState(
       pageController: pageController ?? this.pageController,
@@ -29,6 +32,7 @@ class HomeState extends Equatable {
       commentName: commentName ?? this.commentName,
       comments: comments ?? this.comments,
       isLoading: isLoading ?? this.isLoading,
+      commentController: commentController ?? this.commentController,
     );
   }
 
@@ -39,5 +43,6 @@ class HomeState extends Equatable {
         commentName,
         comments,
         isLoading,
+        commentController,
       ];
 }

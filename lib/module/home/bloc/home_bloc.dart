@@ -9,10 +9,14 @@ part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
+  final TextEditingController _commentController = TextEditingController();
   final LocalDatabaseServices _localDb = LocalDatabaseServices();
 
   HomeBloc()
-      : super(HomeState(pageController: PageController(initialPage: 0))) {
+      : super(HomeState(
+          pageController: PageController(initialPage: 0),
+          commentController: TextEditingController(),
+        )) {
     on<OnPageChangedEvent>(_onPageChanged);
     on<ChangeCommentNamedEvent>(_onChangeCommentName);
     on<LoadCommentsEvent>(_onLoadComments);
@@ -59,6 +63,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ),
         );
         await _loadComments(event.videoIndex, emit);
+        state.commentController?.clear();
         emit(state.copyWith(commentName: ''));
       } catch (e) {
         print('Error adding comment: $e');
@@ -68,11 +73,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onClearComment(ClearCommentEvent event, Emitter<HomeState> emit) {
+    state.commentController?.clear();
     emit(state.copyWith(commentName: ''));
   }
 
   @override
   Future<void> close() {
+    state.commentController?.dispose();
     state.pageController.dispose();
     return super.close();
   }

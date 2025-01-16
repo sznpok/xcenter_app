@@ -130,7 +130,8 @@ class HomeView extends StatelessWidget {
                                             child: CustomTextFormField(
                                               name: "comment",
                                               hintText: "Add a comment",
-                                              initialValue: state.commentName,
+                                              controller:
+                                                  state.commentController,
                                               onChanged: (value) {
                                                 if (value != null) {
                                                   context.read<HomeBloc>().add(
