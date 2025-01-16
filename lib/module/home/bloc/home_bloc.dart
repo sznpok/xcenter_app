@@ -13,6 +13,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<PauseVideoEvent>(_onPauseVideo);
     on<SeekToStartVideoEvent>(_onSeekToStartVideo);
     on<OnPageChangedEvent>(_onOnPageChanged);
+    on<ChangeCommentNamedEvent>(_onChangeCommentNamed);
   }
 
   void _onInitializeVideo(
@@ -51,6 +52,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     state.videoPlayerController?.seekTo(Duration.zero);
     state.videoPlayerController?.play();
     emit(state.copyWith(isPlaying: true));
+  }
+
+  void _onChangeCommentNamed(
+      ChangeCommentNamedEvent event, Emitter<HomeState> emit) {
+    emit(state.copyWith(commentName: event.commentName));
   }
 
   @override

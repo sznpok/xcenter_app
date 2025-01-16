@@ -19,3 +19,9 @@ class OnPageChangedEvent extends HomeEvent {
 
   OnPageChangedEvent(this.index);
 }
+
+class ChangeCommentNamedEvent extends HomeEvent {
+  final String commentName;
+
+  ChangeCommentNamedEvent({required this.commentName});
+}

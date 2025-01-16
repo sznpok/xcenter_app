@@ -6,6 +6,7 @@ class HomeState extends Equatable {
   final bool isInitialized;
   final int currentIndex;
   final PageController? pageController;
+  final String commentName;
 
   const HomeState({
     this.videoPlayerController,
@@ -13,6 +14,7 @@ class HomeState extends Equatable {
     this.isInitialized = false,
     this.currentIndex = 0,
     this.pageController,
+    this.commentName = '',
   });
 
   HomeState copyWith({
@@ -21,6 +23,7 @@ class HomeState extends Equatable {
     bool? isInitialized,
     int? currentIndex,
     PageController? pageController,
+    String? commentName,
   }) {
     return HomeState(
       videoPlayerController:
@@ -29,6 +32,7 @@ class HomeState extends Equatable {
       isInitialized: isInitialized ?? this.isInitialized,
       currentIndex: currentIndex ?? this.currentIndex,
       pageController: pageController ?? this.pageController,
+      commentName: commentName ?? this.commentName,
     );
   }
 
@@ -39,5 +43,6 @@ class HomeState extends Equatable {
         isInitialized,
         currentIndex,
         pageController,
+        commentName,
       ];
 }
