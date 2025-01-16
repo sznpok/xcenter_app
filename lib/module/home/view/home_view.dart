@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,7 +12,7 @@ import 'package:tiktok_video/widgets/custom_text_form.dart';
 import '../../../constants/app_colors.dart';
 import '../widgets/custom_video_player.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   static Route<void> route() {
@@ -21,6 +23,56 @@ class HomeView extends StatelessWidget {
       },
       fullscreenDialog: true,
     );
+  }
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  Timer? _botTimer;
+  Timer? _inactivityTimer;
+
+  void _startBotTimer(BuildContext context, HomeBloc bloc) {
+    _botTimer?.cancel();
+    _inactivityTimer?.cancel();
+    _inactivityTimer = Timer(const Duration(seconds: 5), () {
+      if (mounted) {
+        final randomComments = [
+          "Great video! 👏",
+          "This is amazing content! 🔥",
+          "Keep it up! 💪",
+          "Wow, impressive! ⭐",
+          "Love this! ❤️",
+          "Nice work! 👍",
+          "This is fantastic! 🎉",
+          "Awesome content! 🌟",
+          "Very creative! 🎨",
+          "Can't stop watching! 🎬"
+        ];
+        final random =
+            DateTime.now().millisecondsSinceEpoch % randomComments.length;
+
+        bloc.add(AddCommentEvent(
+          videoIndex: bloc.state.currentIndex,
+          comment: "Bot: ${randomComments[random]}",
+        ));
+
+        _startBotTimer(context, bloc);
+      }
+    });
+  }
+
+  void _resetInactivityTimer(BuildContext context, HomeBloc bloc) {
+    _inactivityTimer?.cancel();
+    _startBotTimer(context, bloc);
+  }
+
+  @override
+  void dispose() {
+    _botTimer?.cancel();
+    _inactivityTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -106,11 +158,17 @@ class HomeView extends StatelessWidget {
                             final homeBloc = context.read<HomeBloc>();
                             homeBloc.add(
                                 LoadCommentsEvent(homeBloc.state.currentIndex));
+
                             showCustomBottomSheet(
+                              onDismiss: () {
+                                _botTimer?.cancel();
+                                _inactivityTimer?.cancel();
+                              },
                               child: BlocProvider.value(
                                 value: homeBloc,
                                 child: BlocBuilder<HomeBloc, HomeState>(
                                   builder: (context, state) {
+                                    _startBotTimer(context, homeBloc);
                                     return Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -136,6 +194,9 @@ class HomeView extends StatelessWidget {
                                                   state.commentController,
                                               onChanged: (value) {
                                                 if (value != null) {
+                                                  // Reset timer when user types
+                                                  _resetInactivityTimer(
+                                                      context, homeBloc);
                                                   context.read<HomeBloc>().add(
                                                         ChangeCommentNamedEvent(
                                                             commentName: value),
@@ -147,6 +208,8 @@ class HomeView extends StatelessWidget {
                                                   if (state.commentName
                                                           ?.isNotEmpty ??
                                                       false) {
+                                                    _resetInactivityTimer(
+                                                        context, homeBloc);
                                                     context
                                                         .read<HomeBloc>()
                                                         .add(

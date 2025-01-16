@@ -10,7 +10,7 @@ part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final TextEditingController _commentController = TextEditingController();
-  final LocalDatabaseServices _localDb = LocalDatabaseServices();
+  final LocalDatabaseServices _localDb = LocalDatabaseServices.instance;
 
   HomeBloc()
       : super(HomeState(
@@ -53,21 +53,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _onAddComment(
       AddCommentEvent event, Emitter<HomeState> emit) async {
-    if (state.commentName?.isNotEmpty ?? false) {
-      emit(state.copyWith(isLoading: true));
-      try {
-        await _localDb.addComment(
-          CommentModel(
-            commentName: state.commentName,
-            videoIndex: event.videoIndex,
-          ),
-        );
-        await _loadComments(event.videoIndex, emit);
-        state.commentController?.clear();
-        emit(state.copyWith(commentName: ''));
-      } catch (e) {
-        print('Error adding comment: $e');
-      }
+    emit(state.copyWith(isLoading: true));
+    try {
+      final comment = CommentModel(
+        videoIndex: event.videoIndex,
+        commentName: event.comment,
+      );
+
+      await _localDb.addComment(comment);
+      await _loadComments(event.videoIndex, emit);
+      
+      state.commentController?.clear();
+      emit(state.copyWith(
+        commentName: '',
+        isLoading: false,
+      ));
+    } catch (e) {
+      print('Error adding comment: $e');
       emit(state.copyWith(isLoading: false));
     }
   }

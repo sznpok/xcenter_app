@@ -3,6 +3,10 @@ import 'package:hive/hive.dart';
 import '../model/comment_model.dart';
 
 class LocalDatabaseServices {
+  static final LocalDatabaseServices instance = LocalDatabaseServices._init();
+
+  LocalDatabaseServices._init();
+
   static const String commentBoxName = 'comments';
 
   // Initialize Hive and open box for comments
