@@ -183,69 +183,61 @@ class _HomeViewState extends State<HomeView> {
                                               ),
                                         ),
                                         10.verticalSpace,
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10.sp),
-                                          child: Expanded(
-                                            child: CustomTextFormField(
-                                              name: "comment",
-                                              hintText: "Add a comment",
-                                              controller:
-                                                  state.commentController,
-                                              onChanged: (value) {
-                                                if (value != null) {
-                                                  // Reset timer when user types
-                                                  _resetInactivityTimer(
-                                                      context, homeBloc);
-                                                  context.read<HomeBloc>().add(
-                                                        ChangeCommentNamedEvent(
-                                                            commentName: value),
-                                                      );
-                                                }
-                                              },
-                                              suffixIcon: IconButton(
-                                                onPressed: () {
-                                                  if (state.commentName
-                                                          ?.isNotEmpty ??
-                                                      false) {
-                                                    _resetInactivityTimer(
-                                                        context, homeBloc);
-                                                    context
-                                                        .read<HomeBloc>()
-                                                        .add(
-                                                          AddCommentEvent(
-                                                            videoIndex: state
-                                                                .currentIndex,
-                                                            comment: state
-                                                                .commentName!,
-                                                          ),
-                                                        );
-                                                    context.read<HomeBloc>().add(
-                                                        ClearCommentEvent());
-                                                  }
-                                                },
-                                                icon: const Icon(Icons.send),
-                                              ),
-                                            ),
+                                        CustomTextFormField(
+                                          name: "comment",
+                                          hintText: "Add a comment",
+                                          controller: state.commentController,
+                                          onChanged: (value) {
+                                            if (value != null) {
+                                              // Reset timer when user types
+                                              _resetInactivityTimer(
+                                                  context, homeBloc);
+                                              context.read<HomeBloc>().add(
+                                                    ChangeCommentNamedEvent(
+                                                        commentName: value),
+                                                  );
+                                            }
+                                          },
+                                          suffixIcon: IconButton(
+                                            onPressed: () {
+                                              if (state.commentName
+                                                      ?.isNotEmpty ??
+                                                  false) {
+                                                _resetInactivityTimer(
+                                                    context, homeBloc);
+                                                context.read<HomeBloc>().add(
+                                                      AddCommentEvent(
+                                                        videoIndex:
+                                                            state.currentIndex,
+                                                        comment:
+                                                            state.commentName!,
+                                                      ),
+                                                    );
+                                                context
+                                                    .read<HomeBloc>()
+                                                    .add(ClearCommentEvent());
+                                              }
+                                            },
+                                            icon: const Icon(Icons.send),
                                           ),
                                         ),
-                                        Expanded(
-                                          child: state.isLoading
-                                              ? const Center(
-                                                  child:
-                                                      CircularProgressIndicator())
-                                              : state.comments.reversed
-                                                      .toList()
-                                                      .isEmpty
-                                                  ? Center(
-                                                      child: Text(
-                                                        'No comments yet',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium,
-                                                      ),
-                                                    )
-                                                  : ListView.builder(
+                                        state.isLoading
+                                            ? const Center(
+                                                child:
+                                                    CircularProgressIndicator())
+                                            : state.comments.reversed
+                                                    .toList()
+                                                    .isEmpty
+                                                ? Center(
+                                                    child: Text(
+                                                      'No comments yet',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  )
+                                                : Expanded(
+                                                    child: ListView.builder(
                                                       itemCount: state
                                                           .comments.reversed
                                                           .toList()
@@ -262,7 +254,7 @@ class _HomeViewState extends State<HomeView> {
                                                         );
                                                       },
                                                     ),
-                                        ),
+                                                  ),
                                       ],
                                     );
                                   },
