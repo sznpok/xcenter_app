@@ -100,6 +100,8 @@ X-center Video App is a mobile application built using the Flutter framework. Th
 ---
 
 ## Folder Structure
+
+```
 lib/
 ├── constant/             # Stores global constants for the app
 │   ├── app_colors.dart         # Predefined app color constants
@@ -135,7 +137,7 @@ lib/
 ├── splash.dart           # Splash screen implementation displayed at app startup
 ├── main.dart             # Entry point of the Flutter application
 
-
+```
 ## Dependencies
 Here is a list of key dependencies used in this project:
 
